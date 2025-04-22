@@ -1,82 +1,79 @@
-import React, { useState, useEffect } from "react";
-import { SecondsCounter } from "./SecondsCounter";
+import { useState, useEffect } from "react"
+// nombrado y default
+import "../../styles/home.css"
 
-
-const names = ["Juan", "Pedro", "Judas", "Deimian"]
-
-//create your first component
 const Home = () => {
 
-	// Así declaramos un estado en react
-	// const [el estado actual, funcion para modificar el estado] = useState(tipo dato)
-	const [counter, setCounter] = useState(0) // va cualquier tipo de datos
-	const [nombre, setNombre] = useState("Name")
-	const [character, setCharacter] = useState([])
+
+	// creamos un estado del componente
+	const [counter, setCounter] = useState(0) // devuelve estado actual y funcion para modificar el estado actual
+	const [myAlert, setMyAlert] = useState(false)
 
 
-	const increment = () => {
-		console.log(counter)
-		setCounter(counter + 1)
+	function increment() {
+		if (counter < 10) {
+			setCounter(counter + 1)
+		}
+
 	}
 
-	function changeName() {
-		let randomName = Math.floor(Math.random() * names.length)
-		setNombre(names[randomName])
-	}
-
-	const getCharacters = () => {
-		fetch("https://rickandmortyapi.com/api/character")
-			.then((response) => response.json())
-			.then((data) => setCharacter(data.results))
+	const decrement = () => {
+		if (counter > -10) {
+			setCounter(counter - 1)
+		}
 	}
 
 
-	// Efectos secondario
+	// recibe dos parametros, un arrow function y una lista de depandencias
 	useEffect(() => {
-		// haga una consulta a la api --> información api
-		console.log("HOla desde el effecto")
-	}, [nombre])
+		console.log(`El counter cambio a ${counter}`)
+
+		if (counter % 3 == 0) {
+			setMyAlert(true)
+		} else {
+			setMyAlert(false)
+		}
+
+	}, [counter])
+
 
 	useEffect(() => {
-		getCharacters() // llamado a la api traje los nomnres de rick and morty
+		setTimeout(() => {
+			console.log("trae info de la api")
+		}, 2000)
 	}, [])
 
-
-
 	return (
-		<div className="container">
+		<div className={`container mt-5`}>
 			<div className="row">
-				<div className="col-12 border border-danger my-5">
-					<SecondsCounter />
-				</div>
-			</div>
-			<div className="row">
-				<div className="col-12">
-					<div>
-						<h1>Counter</h1>
-						<h2>{counter}</h2>
-						<button
-							className="btn btn-secondary"
-							onClick={increment}
-						>Sumar</button>
-					</div>
-					<h3>Hola ¿qué tal {nombre}?</h3>
+				<div className="col-12 d-flex justify-content-center">
 					<button
-						className="btn btn-success"
-						onClick={changeName}
-					>Cambiar nombre</button>
-				</div>
+						type="button"
+						className="btn btn-outline-success"
+						onClick={increment}
+					>Incrementar</button>
 
+					<h1
+						className={`mx-3 ${counter % 2 == 0 ? "text-danger" : "text-success"}`}>
+						{counter}
+					</h1>
+
+					<button
+						type="button"
+						className="btn btn-outline-danger"
+						onClick={decrement}
+					>Decrementer</button>
+				</div>
 				{
-					character.map((item) => {
-						return (
-							<p key={item.id}>Hola ¿qué tal {item.name}?</p>
-						)
-					})
+					myAlert ?
+						<div className="alert alert-danger mt-5">
+							<p>Soy una alerta</p>
+						</div> : null
 				}
+
 			</div>
 		</div>
-	);
-};
+	)
+}
 
 export default Home;
